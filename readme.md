@@ -4,7 +4,7 @@
 
 ### *Sistema Inteligente de Gestão e Otimização Energética*
 
-**🖥️ Frontend & Backend**
+**Frontend & Backend**
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
 ![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
@@ -12,18 +12,18 @@
 ![SCSS](https://img.shields.io/badge/SCSS-CC6699?style=for-the-badge&logo=sass&logoColor=white)
 ![Zod](https://img.shields.io/badge/Zod-4F46E5?style=for-the-badge&logo=typescript&logoColor=white)
 
-**🗄️ Banco de Dados & IA & Automação**
+**Banco de Dados & IA & Automação**
 
 ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
 ![Google Gemini](https://img.shields.io/badge/Google%20Gemini-8E75B2?style=for-the-badge&logo=google&logoColor=white)
 ![n8n](https://img.shields.io/badge/n8n-EA4B71?style=for-the-badge&logo=n8n&logoColor=white)
 
-**🌐 APIs & Serviços Externos**
+**APIs & Serviços Externos**
 
 ![OpenWeather](https://img.shields.io/badge/OpenWeather-EB6E4B?style=for-the-badge&logo=openweathermap&logoColor=white)
 ![SendGrid](https://img.shields.io/badge/SendGrid-3994FF?style=for-the-badge&logo=sendgrid&logoColor=white)
 
-**🏷️ Projeto**
+**Projeto**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 [![Hackathon InovaUni 2025](https://img.shields.io/badge/Hackathon-InovaUni%202025-purple?style=for-the-badge)](https://github.com/arthurpestana)
