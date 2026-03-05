@@ -34,21 +34,6 @@
 </div>
 
 
-
-## 📑 Índice
-
-- [Sobre](#-sobre)
-- [Fluxo ETL](#-Fluxo-ETL)
-- [Modelagem Preditiva](#-modelagem-preditiva)
-- [Como Funciona](#-como-funciona)
-- [Instalação](#-instalação)
-- [Variáveis de Ambiente](#-variáveis-de-ambiente)
-- [API — Módulos e Rotas](#-api--módulos-e-rotas)
-- [Workflows n8n](#-workflows-n8n)
-- [Requisitos](#-requisitos)
-- [Equipe](#-equipe)
-
-
 ## Sobre
 
 O **Luminus Sun** é uma solução desenvolvida para o **4º Hackathon InovaUni 2025**, com foco no tema **Energia Limpa e Sustentável (ODS 7)**. A plataforma correlaciona previsão climática e padrões de consumo elétrico para maximizar a eficiência energética residencial, gerando economia financeira e redução de impacto ambiental.
@@ -59,17 +44,6 @@ O núcleo do sistema é baseado em dados brutos heterogêneos (meteorológicos, 
 |---|---|
 | 🔴 **Problema** | A geração excessiva e desorganizada desestimula o uso da energia solar como solução sustentável |
 | 🟢 **Solução** | Monitoramento energético com análise preditiva que promove o consumo consciente e a microgeração sustentável |
-<br>
-
-## Fluxo ETL
-
-Cada fonte de dados passa por um processo de **Extract → Transform → Load** orquestrado pelos módulos `services/`:
-
-| Etapa | Processo | Responsável |
-|---|---|---|
-| **Extract** | Requisições às APIs externas com retry e fallback | `openWeather`, `inmet`, `ons` |
-| **Transform** | Normalização de unidades, filtragem de outliers, enriquecimento geoespacial | `geocoding`, `ibgeGeocoding` |
-| **Load** | Inserção via Mongoose com validação Zod antes da persistência | `weather/bulk`, `energy/sync` |
 <br>
 
 ## 📊 Modelagem Preditiva
@@ -124,15 +98,13 @@ A **memória conversacional** armazenada no MongoDB permite que o modelo de reco
 | # | Etapa | Descrição | Tecnologia |
 |---|---|---|---|
 | 1️⃣ | **Cadastro** | Usuário informa nome, e-mail, cidade e estado | Next.js + MongoDB |
-| 2️⃣ | **Geocodificação** | Identifica a estação INMET mais próxima via coordenadas — define `latitude`, `altitude` e região ONS | OpenWeather Geo + INMET + IBGE |
-| 3️⃣ | **Coleta Climática** | Previsão horária (5 dias) com variáveis meteorológicas brutas (camada Bronze) | OpenWeather API |
-| 4️⃣ | **Feature Engineering** | Normalização e derivação das variáveis preditoras: cobertura de nuvens, umidade, temperatura e ângulo zenital solar | Pipeline ETL interno |
-| 5️⃣ | **Cálculo GHI** | Estimativa de irradiância hora a hora (W/m²) via modelo GHI por lat/lon, nuvens, umidade e altitude | Algoritmo GHI interno |
-| 6️⃣ | **Validação do Modelo** | Comparação das estimativas regionais com dados reais de geração solar da ONS | ONS API |
-| 7️⃣ | **Análise IA** | Gemini recebe a série temporal GHI (Gold Layer) e gera recomendações personalizadas com memória histórica | Google Gemini Flash 2.5 |
-| 8️⃣ | **Relatório** | Top 3 janelas horárias para consumo + dicas de economia baseadas no perfil preditivo | n8n + Gemini |
-| 9️⃣ | **Envio** | Relatório HTML responsivo enviado por e-mail | SendGrid |
-| 🔟 | **Persistência** | Histórico de predições e memória conversacional para aprendizado contínuo | MongoDB |
+| 2️⃣ | **Geocodificação** | Identifica a estação INMET mais próxima via coordenadas | OpenWeather Geo + INMET |
+| 3️⃣ | **Coleta Climática** | Previsão horária (5 dias) com variáveis meteorológicas | OpenWeather API |
+| 4️⃣ | **Cálculo Solar** | Estimativa de irradiância (GHI) por lat/lon, nuvens e altitude | Algoritmo GHI interno |
+| 5️⃣ | **Análise IA** | Gemini processa dados e gera recomendações personalizadas | Google Gemini Flash 2.5 |
+| 6️⃣ | **Relatório** | 3 melhores horários para consumo + dicas de economia | n8n + Gemini |
+| 7️⃣ | **Envio** | Relatório HTML responsivo enviado por e-mail | SendGrid |
+| 8️⃣ | **Persistência** | Histórico e memória conversacional para aprendizado contínuo | MongoDB |
 
 ## 🚀 Instalação
 
