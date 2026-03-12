@@ -12,10 +12,9 @@
 ![SCSS](https://img.shields.io/badge/SCSS-CC6699?style=for-the-badge&logo=sass&logoColor=white)
 ![Zod](https://img.shields.io/badge/Zod-4F46E5?style=for-the-badge&logo=typescript&logoColor=white)
 
-**Banco de Dados & IA & Automação**
+**Banco de Dados & Automação**
 
 ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
-![Google Gemini](https://img.shields.io/badge/Google%20Gemini-8E75B2?style=for-the-badge&logo=google&logoColor=white)
 ![n8n](https://img.shields.io/badge/n8n-EA4B71?style=for-the-badge&logo=n8n&logoColor=white)
 
 **APIs & Serviços Externos**
@@ -36,12 +35,12 @@
 
 O **Luminus Sun** é uma solução desenvolvida para o **4º Hackathon InovaUni 2025**, com foco no tema **Energia Limpa e Sustentável (ODS 7)**. A plataforma correlaciona previsão climática e padrões de consumo elétrico para maximizar a eficiência energética residencial, gerando economia financeira e redução de impacto ambiental.
 
-O núcleo do sistema é baseado em dados brutos heterogêneos (meteorológicos, geoespaciais e energéticos) que são coletados, normalizados e transformados em *features* estruturadas que alimentam um modelo de predição. As predições resultantes são consumidas pela IA generativa (Gemini) para gerar recomendações contextualizadas e personalizadas por usuário.
+O núcleo do sistema é baseado em dados brutos heterogêneos (meteorológicos, geoespaciais e energéticos) que são coletados, normalizados e transformados em *features* estruturadas que alimentam um modelo de predição. As predições resultantes são consumidas por um **AI Agent** que orquestra o modelo preditivo, gerencia a memória conversacional no MongoDB e entrega análises contextualizadas por e-mail, disparadas automaticamente todo dia às 10h.
 
 | | |
 |---|---|
-| 🔴 **Problema** | A geração excessiva e desorganizada desestimula o uso da energia solar como solução sustentável |
-| 🟢 **Solução** | Monitoramento energético com análise preditiva que promove o consumo consciente e a microgeração sustentável |
+| 🔴 **Problema** | O desperdício energético e desoganização no controle de consumo energético desestimula o uso da energia solar como solução sustentável |
+| 🟢 **Solução** | Monitoramento energético com análise preditiva e um agente de IA que promove o consumo consciente e a microgeração sustentável |
 <br>
 
 ## 📊 Modelagem Preditiva
@@ -74,21 +73,21 @@ GHI_estimado = I₀ × τ(nuvens, umidade, altitude) × cos(θz)
 
 > Os dados de geração real da **ONS** funcionam como *ground truth* para validação das estimativas regionais, permitindo calibrar o modelo por subsistema (SE/CO, S, NE, N).
 
-### Saída do Modelo e Consumo pela IA
+### Saída do Modelo e Consumo pelo AI Agent
 
-Os valores de GHI estimados hora a hora são estruturados como séries temporais e entregues ao **Gemini Flash 2.5** como contexto quantitativo. A IA interpreta os padrões preditivos e produz:
+Os valores de GHI estimados hora a hora são estruturados como séries temporais e entregues ao **AI Agent** (n8n) como contexto quantitativo. O agente recebe os dados meteorológicos horários via HTTP Request, recupera o histórico conversacional do usuário no MongoDB e produz:
 
-- 🕐 **Top 3 janelas horárias** de maior disponibilidade solar para consumo ou geração
+- 🕐 **3 janelas horárias** de maior disponibilidade solar para consumo ou geração
 - 📉 **Alertas de baixa irradiância** antecipando períodos nublados
 - 💡 **Recomendações personalizadas** de eficiência baseadas no histórico do usuário (memória conversacional via MongoDB)
 
 ```
-Série temporal GHI (5 dias × 24h) → Gemini (prompt estruturado) → Recomendações + Relatório HTML
+Série temporal GHI (5 dias × 24h) → AI Agent (n8n) → Recomendações + Relatório HTML → SendGrid
 ```
 
 ### Aprendizado Contínuo
 
-A **memória conversacional** armazenada no MongoDB permite que o modelo de recomendação evolua por usuário ao longo do tempo. Interações anteriores, padrões de consumo informados e feedbacks implícitos são incorporados ao contexto das análises subsequentes, tornando as predições progressivamente mais precisas e personalizadas.
+A **memória conversacional** armazenada no MongoDB e gerenciada pelo AI Agent permite que as recomendações evoluam por usuário ao longo do tempo. A cada execução diária do agente, interações anteriores, padrões de consumo informados e feedbacks implícitos são incorporados ao contexto das análises subsequentes, tornando as predições progressivamente mais precisas e personalizadas.
 
 
 ## 🧠 Como Funciona
@@ -99,10 +98,10 @@ A **memória conversacional** armazenada no MongoDB permite que o modelo de reco
 | 2️⃣ | **Geocodificação** | Identifica a estação INMET mais próxima via coordenadas | OpenWeather Geo + INMET |
 | 3️⃣ | **Coleta Climática** | Previsão horária (5 dias) com variáveis meteorológicas | OpenWeather API |
 | 4️⃣ | **Cálculo Solar** | Estimativa de irradiância (GHI) por lat/lon, nuvens e altitude | Algoritmo GHI interno |
-| 5️⃣ | **Análise IA** | Gemini processa dados e gera recomendações personalizadas | Google Gemini Flash 2.5 |
-| 6️⃣ | **Relatório** | 3 melhores horários para consumo + dicas de economia | n8n + Gemini |
+| 5️⃣ | **AI Agent** | Agente processa dados climáticos, recupera memória do usuário e gera recomendações personalizadas | n8n + MongoDB |
+| 6️⃣ | **Relatório** | 3 melhores horários para consumo + dicas de economia geradas pelo agente | AI Agent |
 | 7️⃣ | **Envio** | Relatório HTML responsivo enviado por e-mail | SendGrid |
-| 8️⃣ | **Persistência** | Histórico e memória conversacional para aprendizado contínuo | MongoDB |
+| 8️⃣ | **Persistência** | Histórico e memória conversacional para aprendizado contínuo do agente | MongoDB |
 
 ## 🚀 Instalação
 
@@ -111,7 +110,7 @@ A **memória conversacional** armazenada no MongoDB permite que o modelo de reco
 - Bun 1.3.1+ / Node.js 18+
 - MongoDB 7.0+ (local ou Atlas)
 - Conta n8n
-- Chaves de API: OpenWeather, Google Gemini, SendGrid
+- Chaves de API: OpenWeather, SendGrid
 
 ### Backend
 
@@ -161,32 +160,6 @@ npm run dev
 ```
 
 Acesse: `http://localhost:3000`
-
-
-## 🔐 Variáveis de Ambiente
-
-```env
-# MongoDB
-MONGODB_URI=mongodb+srv://user:password@cluster.mongodb.net/luminus
-
-# APIs Externas
-OPENWEATHER_API_KEY=sua_chave_openweather
-GEMINI_API_KEY=sua_chave_gemini
-SENDGRID_API_KEY=sua_chave_sendgrid
-
-# n8n
-N8N_WEBHOOK_URL=https://seu-n8n.com/webhook/luminus
-
-# App
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-```
-
-| Serviço | Link |
-|---|---|
-| OpenWeather | [openweathermap.org/api](https://openweathermap.org/api) |
-| Google Gemini | [ai.google.dev](https://ai.google.dev) |
-| SendGrid | [sendgrid.com](https://sendgrid.com) |
-| MongoDB | [mongodb.com](https://www.mongodb.com) |
 
 
 ## API — Módulos e Rotas
@@ -254,39 +227,36 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 ## 🔄 Workflows n8n
 
 ### 📧 AI Notification Agent
-Disparado diariamente às **10h** via cron. Executa o pipeline completo de dados: coleta features climáticas atualizadas, aciona o modelo GHI, processa a série temporal preditiva com o Gemini (com memória conversacional em MongoDB) e envia relatório HTML personalizado por e-mail via SendGrid.
-
+Disparado diariamente às **10h** via cron. Executa o pipeline completo de dados: coleta as features climáticas horárias via HTTP Request (temperatura, código de tempo por hora), aciona o AI Agent com o contexto da data atual e os dados meteorológicos, recupera a memória conversacional do usuário no MongoDB usando o `id_usuario` como chave de sessão e envia o relatório HTML personalizado por e-mail. O agente mantém um histórico por usuário que é enriquecido a cada execução, tornando as análises progressivamente mais precisas.
 
 ### 💬 Climate Virtual AI Assistant
-Chatbot climático ativado por webhook POST. Recebe mensagem do usuário, recupera o histórico preditivo e a memória conversacional no MongoDB e responde com análise solar personalizada baseada nas predições de GHI do usuário.
+Chatbot climático ativado por **webhook POST**. Recebe a mensagem do usuário (`mensagem` no body da requisição), recupera o histórico conversacional no MongoDB pela chave de sessão do usuário e responde com análise solar personalizada baseada nas predições de GHI. O agente responde diretamente ao webhook com o resultado gerado, sem intermediários.
 
-
-> Os arquivos estão em `workflows/` e podem ser importados diretamente no n8n.
 
 ## 📋 Requisitos
 
-### ✅ Funcionais
+### Funcionais
 
 | ID | Descrição | Status |
 |---|---|---|
 | RF01 | Iniciar fluxo de automação após cadastro | ✅ |
-| RF02 | Persistir análise da IA e histórico de predições por usuário | ✅ |
+| RF02 | Persistir memória conversacional do AI Agent por usuário no MongoDB | ✅ |
 | RF03 | Obter previsão climática horária via OpenWeather | ✅ |
 | RF04 | Executar pipeline de feature engineering antes da inferência do modelo GHI | ✅ |
-| RF05 | Alimentar AI Agent com série temporal GHI e dados meteorológicos | ✅ |
+| RF05 | Alimentar o AI Agent com série temporal GHI e dados meteorológicos horários | ✅ |
 | RF06 | Gerar relatório com 3 melhores janelas horárias + dicas baseadas no perfil preditivo | ✅ |
 | RF07 | Geocodificação para estação INMET mais próxima (feature de altitude e coordenadas) | ✅ |
 | RF08 | Validar estimativas GHI com dados reais de geração solar (ONS) | ✅ |
-| RF09 | Enviar relatório HTML ao e-mail do usuário | ✅ |
+| RF09 | Enviar relatório HTML ao e-mail do usuário via SendGrid | ✅ |
 
-### ⚙️ Não Funcionais
+### Não Funcionais
 
 | ID | Categoria | Descrição | Status |
 |---|---|---|---|
-| RNF01 | Desempenho | Tempo de resposta do pipeline preditivo completo < 10 segundos | ✅ |
+| RNF01 | Desempenho | Tempo de resposta do pipeline preditivo completo (incluindo execução do AI Agent) < 10 segundos | ✅ |
 | RNF02 | Segurança | Senhas com hash bcrypt, JWT HttpOnly | ✅ |
-| RNF03 | Confiabilidade | Tratamento de falhas em APIs externas | ✅ |
-| RNF04 | Usabilidade | Relatórios HTML responsivos (Gmail, Outlook) | ✅ |
+| RNF03 | Confiabilidade | Tratamento de falhas em APIs externas e no webhook do AI Agent | ✅ |
+| RNF04 | Usabilidade | Relatórios HTML responsivos gerados pelo agente (Gmail, Outlook) | ✅ |
 | RNF05 | Qualidade de Dados | Validação de schemas via Zod em todas as camadas do pipeline | ✅ |
 
 ## 👥 Equipe
@@ -305,5 +275,3 @@ Chatbot climático ativado por webhook POST. Recebe mensagem do usuário, recupe
 | Nome | Papel |
 |---|---|
 | Graciliano Henrique | Consultoria Técnica Agronômica |
-
-
