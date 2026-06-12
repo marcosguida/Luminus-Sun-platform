@@ -2,7 +2,7 @@
 
 # ☀️ Luminus Sun
 
-### *Sistema Inteligente de Gestão e Otimização Energética*
+### Sistema Inteligente de Gestão e Otimização Energética
 
 **Frontend & Backend**
 
